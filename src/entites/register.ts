@@ -1,10 +1,12 @@
 import { PrimaryGeneratedColumn, Column, Entity } from "typeorm";
 
-@Entity("student")
-export class Teacher {
+@Entity("register")
+export class Register {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
-  @Column({ unique: true })
-  email: string;
+  @Column()
+  studentId: string;
+
+  @
 }

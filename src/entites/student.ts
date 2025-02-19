@@ -9,9 +9,6 @@ export class Student {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  teachersAssigned: string[];
-
   @Column("enum", { enum: StudentStatus })
   status: StudentStatus;
 }
