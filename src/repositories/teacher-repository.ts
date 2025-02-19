@@ -1,12 +1,11 @@
-import { Student } from "../entites/student";
 import { AppDataSource } from "../data-source";
 import { Teacher } from "../entites/teacher";
 
-export class teacherRepository {
+export class TeacherRepository {
   private teacherRepository = AppDataSource.getRepository(Teacher);
 
-  async findAll(): Promise<Teacher[]> {
-    return this.teacherRepository.find();
+  async findByEmail(email: string): Promise<Teacher> {
+    return this.teacherRepository.findOneBy({ email });
   }
 
   async create(email: string): Promise<Teacher> {
