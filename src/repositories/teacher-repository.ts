@@ -1,4 +1,4 @@
-import { Student } from "src/entites/student";
+import { Student } from "../entites/student";
 import { AppDataSource } from "../data-source";
 import { Teacher } from "../entites/teacher";
 

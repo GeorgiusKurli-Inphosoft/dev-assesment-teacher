@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { studentRepository } from "src/repositories/student-repository";
-import { teacherRepository } from "src/repositories/teacher-repository";
+import { studentRepository } from "../repositories/student-repository";
+import { teacherRepository } from "../repositories/teacher-repository";
 
 export class MainController {
   private teacherRepository = new teacherRepository();
@@ -14,3 +14,4 @@ export class MainController {
 
   async retriveForNotifications(req: Request, res: Response) {}
 }
+  

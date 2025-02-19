@@ -1,6 +1,6 @@
-import { Student } from "src/entites/student";
-import { Teacher } from "src/entites/teacher";
 import { DataSource } from "typeorm";
+import { Student } from "./entites/student";
+import { Teacher } from "./entites/teacher";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
