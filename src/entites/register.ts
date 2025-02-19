@@ -5,8 +5,9 @@ export class Register {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
-  @Column()
+  @Column({name: "student_id"})
   studentId: string;
 
-  @
+  @Column({name: "teacher_id"})
+  teacherId: string;
 }
