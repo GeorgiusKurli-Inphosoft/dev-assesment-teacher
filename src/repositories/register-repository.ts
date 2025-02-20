@@ -1,11 +1,30 @@
+import { Teacher } from "../entites/teacher";
+import { Student } from "../entites/student";
 import { AppDataSource } from "../data-source";
 import { Register } from "../entites/register";
-import { InsertResult } from "typeorm";
 
 export class RegisterRepository {
-  private studentRepository = AppDataSource.getRepository(Register);
+  private registerRepository = AppDataSource.getRepository(Register);
 
-  async create(studentId: string, teacherId: string): Promise<InsertResult> {
-    return this.studentRepository.insert({ studentId, teacherId });
+  async create(teacher: Teacher, students: Student[]) {
+    const studentIds = students.map((student) => student.email);
+
+    const registers = await this.registerRepository
+      .createQueryBuilder("register")
+      .where("student_id IN(:...studentIds)", { studentIds })
+      .andWhere("teacher_id = :teacherId", { teacherId: teacher.id })
+      .getMany();
+
+    const existingStudentRegister = registers.map((x) => x.studentId);
+
+    const newRegisters = studentIds
+      .filter((x) => x in existingStudentRegister)
+      .map((studentId) => {
+        return { teacherId: teacher.id, studentId };
+      });
+
+    if (newRegisters.length > 0) {
+      this.registerRepository.insert(newRegisters);
+    }
   }
 }

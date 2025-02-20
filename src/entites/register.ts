@@ -2,7 +2,7 @@ import { PrimaryGeneratedColumn, Column, Entity } from "typeorm";
 
 @Entity("register")
 export class Register {
-  @PrimaryGeneratedColumn("uuid", { name: "id" })
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({name: "student_id"})

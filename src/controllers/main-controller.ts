@@ -8,20 +8,20 @@ export class MainController {
   private studentRepository = new StudentRepository();
   private registerRepository = new RegisterRepository();
 
-  async registerStudent(req: Request, res: Response) {
-    const teacher = await this.teacherRepository.findByEmail(
-      req.param["teacher"]
+  async registerStudent(
+    req: Request<{ teacher: string; students: string[] }>,
+    res: Response
+  ) {
+    const { teacher, students } = req.body;
+    const teacherEntity = await this.teacherRepository.createIfNotExist(
+      teacher
     );
-    if (teacher) {
-      const students = await this.studentRepository.findByEmails(
-        req.param["students"]
-      );
-      students.forEach((student) => {
-        this.registerRepository.create(student.id, teacher.id);
-      });
-    }
+    const studentEntities = await this.studentRepository.createIfNotExist(
+      students
+    );
+    await this.registerRepository.create(teacherEntity, studentEntities);
 
-    res.send();
+    return res.status(204).json({ message: "success" });
   }
 
   async getCommonStudents(req: Request, res: Response) {}

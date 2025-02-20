@@ -1,8 +1,8 @@
 import { PrimaryGeneratedColumn, Column, Entity } from "typeorm";
 
-@Entity("student")
+@Entity("teacher")
 export class Teacher {
-  @PrimaryGeneratedColumn("uuid", { name: "id" })
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true })

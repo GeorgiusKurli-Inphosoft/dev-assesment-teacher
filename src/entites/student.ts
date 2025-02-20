@@ -3,7 +3,7 @@ import { StudentStatus } from "../enums/student-status.enum";
 
 @Entity("student")
 export class Student {
-  @PrimaryGeneratedColumn("uuid", { name: "id" })
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true })
