@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { Register } from "src/entites/register";
+import { Register } from "../entites/register";
 import { InsertResult } from "typeorm";
 
 export class RegisterRepository {
