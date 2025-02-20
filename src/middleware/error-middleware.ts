@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 
-// src/utils/CustomError.ts
 export class CustomError extends Error {
   public status: number;
 

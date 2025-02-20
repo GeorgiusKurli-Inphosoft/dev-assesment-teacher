@@ -21,7 +21,7 @@ export class StudentRepository {
     const existingEmails = existingStudents.map((student) => student.email);
 
     const newStudents = emails
-      .filter((x) => x in existingEmails)
+      .filter((x) => !existingEmails.includes(x))
       .map((email) => {
         return { email, status: StudentStatus.Active };
       });

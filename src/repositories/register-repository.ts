@@ -7,7 +7,7 @@ export class RegisterRepository {
   private registerRepository = AppDataSource.getRepository(Register);
 
   async create(teacher: Teacher, students: Student[]) {
-    const studentIds = students.map((student) => student.email);
+    const studentIds = students.map((student) => student.id);
 
     const registers = await this.registerRepository
       .createQueryBuilder("register")
@@ -18,7 +18,7 @@ export class RegisterRepository {
     const existingStudentRegister = registers.map((x) => x.studentId);
 
     const newRegisters = studentIds
-      .filter((x) => x in existingStudentRegister)
+      .filter((x) => !existingStudentRegister.includes(x))
       .map((studentId) => {
         return { teacherId: teacher.id, studentId };
       });
