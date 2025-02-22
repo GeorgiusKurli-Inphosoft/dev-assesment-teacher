@@ -13,6 +13,10 @@ export class StudentRepository {
       .getMany();
   }
 
+  async findByIds(id: string[]): Promise<Student[]> {
+    return this.studentRepository.findBy({ id: In(id) });
+  }
+
   async createIfNotExist(emails: string[]): Promise<Student[]> {
     const existingStudents = await this.studentRepository
       .createQueryBuilder("student")

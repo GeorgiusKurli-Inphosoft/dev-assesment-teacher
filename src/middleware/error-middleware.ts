@@ -10,15 +10,18 @@ export class CustomError extends Error {
 }
 
 export const errorMiddleware = (
-  err: unknown,
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  console.log("zaq", err);
   if (err instanceof CustomError) {
-    res.status(500).send({ errors: [{ message: err.message }] });
+    res.status(err.status).send({ errors: [{ message: err.message }] });
   }
 
   // Handle unexpected errors
+
   res.status(500).send({ errors: [{ message: "Something went wrong" }] });
+  // next();
 };

@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { Teacher } from "../entites/teacher";
 import { Student } from "../entites/student";
 import { AppDataSource } from "../data-source";
@@ -26,5 +27,18 @@ export class RegisterRepository {
     if (newRegisters.length > 0) {
       this.registerRepository.insert(newRegisters);
     }
+  }
+
+  async getCommonStudentsByTeacher(teacherIds: string[]) {
+    const rawStudentIds = await this.registerRepository
+      .createQueryBuilder("register")
+      .select(["register.student_id"])
+      .where("teacher_id in (:...teacherIds)", { teacherIds })
+      .groupBy("register.student_id")
+      .having("COUNT(DISTINCT register.teacher_id) = :teacherCount", {
+        teacherCount: teacherIds.length,
+      })
+      .getRawMany();
+    return rawStudentIds.map((x) => x.student_id);
   }
 }
