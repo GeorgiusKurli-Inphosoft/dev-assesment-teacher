@@ -48,7 +48,7 @@ export class MainController {
     const studentEmails = studentEntities.map((x) => x.email);
     return res
       .status(200)
-      .send({ message: "success", students: studentEmails });
+      .send({ students: studentEmails });
   }
 
   async suspendStudent(req: Request, res: Response) {}
