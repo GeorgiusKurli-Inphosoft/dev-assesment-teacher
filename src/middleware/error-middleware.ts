@@ -15,13 +15,10 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("zaq", err);
   if (err instanceof CustomError) {
-    res.status(err.status).send({ errors: [{ message: err.message }] });
+    res.status(err.status).send({ message: err.message });
   }
 
-  // Handle unexpected errors
-
-  res.status(500).send({ errors: [{ message: "Something went wrong" }] });
-  // next();
+  // default error msg
+  res.status(500).send({ message: "Something went wrong" });
 };

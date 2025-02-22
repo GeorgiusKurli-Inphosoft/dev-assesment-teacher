@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Router } from "express";
 import { MainController } from "../controllers/main-controller";
 
 const router = Router();

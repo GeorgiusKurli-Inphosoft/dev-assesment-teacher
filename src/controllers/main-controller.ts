@@ -37,7 +37,7 @@ export class MainController {
     );
 
     if (!teacherEntities?.length) {
-      throw new CustomError("No valid teachers found", 500);
+      throw new CustomError("No valid teachers found", 404);
     }
     const studentIds = await this.registerRepository.getCommonStudentsByTeacher(
       teacherEntities.map((x) => x.id)
@@ -46,12 +46,14 @@ export class MainController {
     const studentEntities = await this.studentRepository.findByIds(studentIds);
 
     const studentEmails = studentEntities.map((x) => x.email);
-    return res
-      .status(200)
-      .send({ students: studentEmails });
+    return res.status(200).send({ students: studentEmails });
   }
 
-  async suspendStudent(req: Request, res: Response) {}
+  async suspendStudent(req: Request, res: Response) {
+    const { student } = req.body;
+    await this.studentRepository.suspendByEmail(student);
+    return res.status(204).json({ message: "success" });
+  }
 
   async retriveForNotifications(req: Request, res: Response) {}
 }

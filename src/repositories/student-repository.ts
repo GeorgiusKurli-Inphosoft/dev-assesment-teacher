@@ -2,6 +2,7 @@ import { Student } from "../entites/student";
 import { AppDataSource } from "../data-source";
 import { StudentStatus } from "../enums/student-status.enum";
 import { In } from "typeorm";
+import { CustomError } from "../middleware/error-middleware";
 
 export class StudentRepository {
   private studentRepository = AppDataSource.getRepository(Student);
@@ -15,6 +16,17 @@ export class StudentRepository {
 
   async findByIds(id: string[]): Promise<Student[]> {
     return this.studentRepository.findBy({ id: In(id) });
+  }
+
+  async suspendByEmail(email: string): Promise<Student> {
+    const student = await this.studentRepository.findOneBy({ email });
+    if (!student) {
+      throw new CustomError("Student email not found", 404)
+    }
+    await this.studentRepository.update(student.id, {
+      status: StudentStatus.Suspended,
+    });
+    return this.studentRepository.findOneBy({ email });
   }
 
   async createIfNotExist(emails: string[]): Promise<Student[]> {
