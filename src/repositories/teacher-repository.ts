@@ -1,11 +1,11 @@
-import { In } from "typeorm";
-import { AppDataSource } from "../data-source";
+import { DataSource, In, Repository } from "typeorm";
 import { Teacher } from "../entites/teacher";
 
 export class TeacherRepository {
-  private teacherRepository = AppDataSource.getRepository(Teacher);
-  constructor() {}
-
+  private teacherRepository: Repository<Teacher>;
+  constructor(dataSource: DataSource) {
+    this.teacherRepository = dataSource.getRepository(Teacher);
+  }
   async findByEmail(email: string): Promise<Teacher> {
     return this.teacherRepository.findOneBy({ email });
   }

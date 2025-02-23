@@ -4,11 +4,12 @@ import { TeacherRepository } from "../repositories/teacher-repository";
 import { RegisterRepository } from "../repositories/register-repository";
 import { CustomError } from "../middleware/error-middleware";
 import { StudentStatus } from "../enums/student-status.enum";
+import { AppDataSource } from "../data-source";
 
 export class MainController {
-  private teacherRepository = new TeacherRepository();
-  private studentRepository = new StudentRepository();
-  private registerRepository = new RegisterRepository();
+  private teacherRepository = new TeacherRepository(AppDataSource);
+  private studentRepository = new StudentRepository(AppDataSource);
+  private registerRepository = new RegisterRepository(AppDataSource);
   private emailRegex = /@([\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,})/g;
 
   async registerStudent(
@@ -22,7 +23,10 @@ export class MainController {
     const studentEntities = await this.studentRepository.createIfNotExist(
       students
     );
-    await this.registerRepository.create(teacherEntity, studentEntities);
+    await this.registerRepository.create(
+      teacherEntity.id,
+      studentEntities.map((x) => x.id)
+    );
 
     return res.status(204).json({ message: "success" });
   }
