@@ -58,7 +58,7 @@ describe("Student Repository Function Test Using SQLite In-Memory DB", () => {
     expect(student[1]).toBeInstanceOf(Student);
   });
 
-  it("should fail creation if student already exists", async () => {
+  it("should skip creation if student already exists", async () => {
     const insertSpy = jest.spyOn(repo, "insert");
 
     const student = await studentRepository.createIfNotExist([studentEmail1]);
