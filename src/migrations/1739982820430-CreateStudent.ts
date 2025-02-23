@@ -5,7 +5,7 @@ export class CreateStudent1739982820430 implements MigrationInterface {
     await queryRunner.query(`CREATE TABLE student (
         id VARCHAR(36) DEFAULT (uuid()),
         email VARCHAR(500) NOT NULL UNIQUE,
-        status ENUM('Active', 'Suspended') NOT NULL,
+        status VARCHAR(50) NOT NULL,
         PRIMARY KEY (id)
     );`);
   }

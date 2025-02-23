@@ -9,6 +9,10 @@ export class Student {
   @Column({ unique: true })
   email: string;
 
-  @Column("enum", { enum: StudentStatus })
+@Column({
+    type: "varchar",
+    enum: StudentStatus,
+    default: StudentStatus.Active,
+  })
   status: StudentStatus;
 }
