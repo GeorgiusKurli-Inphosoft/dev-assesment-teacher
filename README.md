@@ -13,3 +13,6 @@ This will create the pre-requisite tables to run this app.
 
 ## Running The App
 Once the migration script has been successfuly ran, we can run **npm run start** to initialize the app.
+
+## Tests
+Run **npm test** to run the unit tests.
