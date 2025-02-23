@@ -12,7 +12,7 @@ router.get(
 router.post("/suspend", mainController.suspendStudent.bind(mainController));
 router.post(
   "/retrievefornotifications",
-  mainController.retriveForNotifications.bind(mainController)
+  mainController.retrieveForNotifications.bind(mainController)
 );
 
 export default router;

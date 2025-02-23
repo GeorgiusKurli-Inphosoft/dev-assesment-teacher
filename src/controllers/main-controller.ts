@@ -3,11 +3,13 @@ import { StudentRepository } from "../repositories/student-repository";
 import { TeacherRepository } from "../repositories/teacher-repository";
 import { RegisterRepository } from "../repositories/register-repository";
 import { CustomError } from "../middleware/error-middleware";
+import { StudentStatus } from "../enums/student-status.enum";
 
 export class MainController {
   private teacherRepository = new TeacherRepository();
   private studentRepository = new StudentRepository();
   private registerRepository = new RegisterRepository();
+  private emailRegex = /@([\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,})/g;
 
   async registerStudent(
     req: Request<{ teacher: string; students: string[] }>,
@@ -55,5 +57,38 @@ export class MainController {
     return res.status(204).json({ message: "success" });
   }
 
-  async retriveForNotifications(req: Request, res: Response) {}
+  async retrieveForNotifications(req: Request, res: Response) {
+    let recipients: string[] = [];
+    const { teacher, notification } = req.body;
+    const emails = (notification as string)
+      .match(this.emailRegex)
+      .map((x) => x.slice(1));
+
+    const teacherEntity = await this.teacherRepository.findByEmail(teacher);
+    if (!teacherEntity) {
+      throw new CustomError("Teacher not found", 404);
+    }
+
+    if (emails?.length) {
+      const students = await this.studentRepository.findByEmails(emails);
+      recipients = students
+        .filter((x) => x.status == StudentStatus.Active)
+        .map((x) => x.email);
+    }
+
+    const studentIdsUnderTeacher =
+      await this.registerRepository.getCommonStudentsByTeacher([
+        teacherEntity.id,
+      ]);
+    const studentsUnderTeacher = await this.studentRepository.findByIds(
+      studentIdsUnderTeacher
+    );
+    recipients = recipients.concat(
+      studentsUnderTeacher
+        .filter((x) => x.status == StudentStatus.Active)
+        .map((x) => x.email)
+    );
+
+    return res.status(200).send({ recipients });
+  }
 }

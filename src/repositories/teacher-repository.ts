@@ -6,6 +6,10 @@ export class TeacherRepository {
   private teacherRepository = AppDataSource.getRepository(Teacher);
   constructor() {}
 
+  async findByEmail(email: string): Promise<Teacher> {
+    return this.teacherRepository.findOneBy({ email });
+  }
+
   async findByEmails(emails: string[]): Promise<Teacher[]> {
     return this.teacherRepository.findBy({ email: In(emails) });
   }
