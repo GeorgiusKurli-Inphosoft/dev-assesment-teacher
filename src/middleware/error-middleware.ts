@@ -15,10 +15,11 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
+  // catch custom error thrown
   if (err instanceof CustomError) {
     res.status(err.status).send({ message: err.message });
+  } else {
+    // default error msg
+    res.status(500).send({ message: "Something went wrong" });
   }
-
-  // default error msg
-  res.status(500).send({ message: "Something went wrong" });
 };
