@@ -5,7 +5,7 @@ import express, { Application } from "express";
 import { errorMiddleware } from "./middleware/error-middleware";
 
 const app: Application = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // Initialize data source, create server and start listening
 AppDataSource.initialize()
