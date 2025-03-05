@@ -1,4 +1,3 @@
-import { db } from "./db";
 import mainRoutes from "./routes/main-routes";
 import express, { Application } from "express";
 import { errorMiddleware } from "./middleware/error-middleware";
