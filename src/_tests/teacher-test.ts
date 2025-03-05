@@ -1,82 +1,69 @@
-import "reflect-metadata";
-import { DataSource, Repository } from "typeorm";
-import { Teacher } from "../entites/teacher";
+import { teacher } from "../entities";
 import { TeacherRepository } from "../repositories/teacher-repository";
+import { db } from "../db-test";
+import { inArray } from "drizzle-orm";
 
-let testDataSource: DataSource;
-let teacherRepository: TeacherRepository;
-let repo: Repository<Teacher>;
+const teacherRepository = new TeacherRepository(db);
 
 const teacherEmail1 = "teacherken@gmail.com";
 const teacherEmail2 = "teacherken2@gmail.com";
 const uninsertedTeacherEmail = "teacherjohn@gmail.com";
 
 beforeAll(async () => {
-  testDataSource = new DataSource({
-    type: "sqlite",
-    database: ":memory:",
-    dropSchema: true,
-    entities: [Teacher],
-    synchronize: true,
-    logging: false,
-  });
-  await testDataSource.initialize();
-
-  teacherRepository = new TeacherRepository(testDataSource);
-  repo = testDataSource.getRepository(Teacher);
-
   // seed data
-  await repo.insert({ email: teacherEmail1 });
-  await repo.insert({ email: teacherEmail2 });
+  await db.insert(teacher).values({ email: teacherEmail1 });
+  await db.insert(teacher).values({ email: teacherEmail2 });
 });
 
 afterAll(async () => {
-  await testDataSource.destroy();
+  await db
+    .delete(teacher)
+    .where(
+      inArray(teacher.email, [
+        teacherEmail1,
+        teacherEmail2,
+        uninsertedTeacherEmail,
+      ])
+    );
 });
 
-describe("Teacher Repository Function Test Using SQLite In-Memory DB", () => {
+describe("Teacher Repository Function Test", () => {
   it("should return null if teacher is not found", async () => {
-    const teacher = await teacherRepository.findByEmail("test@test.com");
-    expect(teacher).toBeNull();
+    const currentTeacher = await teacherRepository.findByEmail("test@test.com");
+    expect(currentTeacher).toBeUndefined();
   });
 
   it("should find an existing teacher by email", async () => {
-    const teacher = await teacherRepository.findByEmail(teacherEmail1);
-    expect(teacher).not.toBeNull();
-    expect(teacher?.email).toBe(teacherEmail1);
+    const currentTeacher = await teacherRepository.findByEmail(teacherEmail1);
+    expect(currentTeacher).not.toBeNull();
+    expect(currentTeacher?.email).toBe(teacherEmail1);
   });
 
   it("should find multiple existing teacher by emails", async () => {
-    const teacher = await teacherRepository.findByEmails([
+    const currentTeacher = await teacherRepository.findByEmails([
       teacherEmail1,
       teacherEmail2,
     ]);
-    expect(teacher).not.toBeNull();
-    expect(teacher).toHaveLength(2);
-    expect(teacher[0]).toBeInstanceOf(Teacher);
-    expect(teacher[1]).toBeInstanceOf(Teacher);
+    expect(currentTeacher).toHaveLength(2);
+    expect(currentTeacher[0]).toBeTruthy();
+    expect(currentTeacher[1]).toBeTruthy();
   });
 
   it("should skip creation if teacher already exists", async () => {
-    const insertSpy = jest.spyOn(repo, "save");
+    const currentTeacher = await teacherRepository.createIfNotExist(
+      teacherEmail1
+    );
 
-    const teacher = await teacherRepository.createIfNotExist(teacherEmail1);
-
-    expect(insertSpy).toHaveBeenCalledTimes(0);
-    expect(teacher).not.toBeNull();
-    expect(teacher?.email).toBe(teacherEmail1);
+    expect(currentTeacher).not.toBeNull();
+    expect(currentTeacher?.email).toBe(teacherEmail1);
   });
 
   it("should create teacher if not exist", async () => {
-    const insertSpy = jest.spyOn(repo, "save");
-
-    const teacher = await teacherRepository.createIfNotExist(
+    const currentTeacher = await teacherRepository.createIfNotExist(
       uninsertedTeacherEmail
     );
 
-    expect(insertSpy).toHaveBeenCalled();
-    expect(insertSpy).toHaveBeenCalledTimes(1);
-    expect(teacher).not.toBeNull();
-    expect(teacher?.email).toBe(uninsertedTeacherEmail);
+    expect(currentTeacher).not.toBeNull();
+    expect(currentTeacher?.email).toBe(uninsertedTeacherEmail);
   });
 });

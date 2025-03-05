@@ -2,8 +2,8 @@ import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
   dialect: "mysql",
-  schema: "./src/entities",
+  schema: "./entities",
   dbCredentials: {
-    url: "mysql://user:password@localhost:3306/testdb",
+    url: "mysql://testuser:testpassword@localhost:3307/unittestdb",
   },
 });

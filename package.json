@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts",
     "start-docker": "docker-compose up -d",
     "generate-migration": "npx drizzle-kit generate",
-    "migrate": "npx drizzle-kit migrate",
+    "migrate": "npx drizzle-kit migrate --config=drizzle.config.js && npx drizzle-kit migrate --config=drizzle-unit-test.config.js",
     "test": "jest"
   },
   "author": "Georgius",
