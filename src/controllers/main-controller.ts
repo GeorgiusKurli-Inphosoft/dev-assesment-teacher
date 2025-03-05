@@ -4,12 +4,12 @@ import { TeacherRepository } from "../repositories/teacher-repository";
 import { RegisterRepository } from "../repositories/register-repository";
 import { CustomError } from "../middleware/error-middleware";
 import { StudentStatus } from "../enums/student-status.enum";
-import { AppDataSource } from "../data-source";
+import { db } from "../db";
 
 export class MainController {
-  private teacherRepository = new TeacherRepository(AppDataSource);
-  private studentRepository = new StudentRepository(AppDataSource);
-  private registerRepository = new RegisterRepository(AppDataSource);
+  private teacherRepository = new TeacherRepository(db);
+  private studentRepository = new StudentRepository(db);
+  private registerRepository = new RegisterRepository(db);
   private emailRegex = /@([\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,})/g;
 
   async registerStudent(
