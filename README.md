@@ -4,7 +4,7 @@
 
 ## Mysql Server Setup
 Start the docker instance by running **npm run start-docker** in the console.
-If docker is not installed, update the data-source.ts to connect to a mysql server.
+If docker is not installed, update the db.ts and drizzle.config.js to connect to a mysql server.
 
 ## Database Tables Setup
 Ensure that the app is able to connect to the mysql server. 

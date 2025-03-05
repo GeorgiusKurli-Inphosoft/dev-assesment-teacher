@@ -1,46 +1,46 @@
-import { Teacher } from "../entites/teacher";
-import { Student } from "../entites/student";
-import { Register } from "../entites/register";
-import { DataSource, Repository } from "typeorm";
+import { inArray, and, eq, sql } from "drizzle-orm";
+import { MySql2Database } from "drizzle-orm/mysql2";
+import { register, RegisterEntityType } from "../entities";
 
 export class RegisterRepository {
-  private registerRepository: Repository<Register>;
-  constructor(dataSource: DataSource) {
-    this.registerRepository = dataSource.getRepository(Register);
+  private db: MySql2Database;
+  constructor(db: MySql2Database) {
+    this.db = db;
   }
   async create(teacherId: string, studentIds: string[]) {
-
-    const registers = await this.registerRepository
-      .createQueryBuilder("register")
-      .where("student_id IN(:...studentIds)", { studentIds })
-      .andWhere("teacher_id = :teacherId", { teacherId })
-      .getMany();
+    const registers = await this.db
+      .select()
+      .from(register)
+      .where(
+        and(
+          inArray(register.studentId, studentIds),
+          eq(register.teacherId, teacherId)
+        )
+      );
 
     const existingStudentRegister = registers.map((x) => x.studentId);
 
     const newRegisters = studentIds
       .filter((x) => !existingStudentRegister.includes(x))
       .map((studentId) => {
-        return { teacherId, studentId };
+        return { teacherId, studentId } as RegisterEntityType;
       });
-
     if (newRegisters.length > 0) {
-      this.registerRepository.insert(newRegisters);
+      await this.db.insert(register).values(newRegisters);
     }
 
     return newRegisters;
   }
 
   async getCommonStudentsByTeacher(teacherIds: string[]) {
-    const rawStudentIds = await this.registerRepository
-      .createQueryBuilder("register")
-      .select(["register.student_id"])
-      .where("teacher_id in (:...teacherIds)", { teacherIds })
-      .groupBy("register.student_id")
-      .having("COUNT(DISTINCT register.teacher_id) = :teacherCount", {
-        teacherCount: teacherIds.length,
-      })
-      .getRawMany();
-    return rawStudentIds.map((x) => x.student_id);
+    const rawStudentIds = await this.db
+      .select({ studentId: register.studentId })
+      .from(register)
+      .where(inArray(register.teacherId, teacherIds))
+      .groupBy(register.studentId)
+      .having(
+        sql`COUNT(DISTINCT ${register.teacherId}) = ${teacherIds.length}`
+      );
+    return rawStudentIds.map((x) => x.studentId);
   }
 }
